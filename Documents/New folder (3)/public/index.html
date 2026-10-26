@@ -1,0 +1,241 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Maroc News — Morocco in real time</title>
+<meta name="description" content="Live Moroccan news: politics, economy, sports, culture — in English, French, Arabic and Spanish. 3D experience with AI insights." />
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Cairo:wght@400;600;700;800&display=swap" rel="stylesheet" />
+<link rel="stylesheet" href="/css/styles.css?v=8" />
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🇲🇦</text></svg>" />
+</head>
+<body data-theme="dark">
+
+<!-- ══════════════ PRELOADER ══════════════ -->
+<div class="preloader" id="preloader" aria-hidden="true">
+  <div class="preloader-inner">
+    <div class="preloader-star">★</div>
+    <div class="preloader-word">MAROC<span>NEWS</span></div>
+    <div class="preloader-bar"><i></i></div>
+  </div>
+</div>
+
+<!-- ══════════════ HEADER ══════════════ -->
+<header class="site-header" id="siteHeader">
+  <div class="header-inner">
+    <a class="brand" href="#top" data-scroll>
+      <span class="brand-star">★</span>
+      <span class="brand-word">MAROC<em>NEWS</em></span>
+    </a>
+
+    <nav class="header-nav" aria-label="Sections">
+      <a href="#feed" data-scroll data-cat-link="all" class="nav-link active" data-i18n="nav.all">All</a>
+      <a href="#feed" data-scroll data-cat-link="politique" class="nav-link" data-i18n="nav.politics">Politics</a>
+      <a href="#feed" data-scroll data-cat-link="economie" class="nav-link" data-i18n="nav.economy">Economy</a>
+      <a href="#feed" data-scroll data-cat-link="monde" class="nav-link" data-i18n="nav.world">World</a>
+      <a href="#sport" data-scroll class="nav-link" data-i18n="nav.sport">Sport</a>
+      <a href="#culture" data-scroll data-cat-link="culture" class="nav-link" data-i18n="nav.culture">Culture</a>
+    </nav>
+
+    <div class="header-actions">
+      <div class="search-box" id="searchBox">
+        <input type="search" id="searchInput" placeholder="Search news…" data-i18n-ph="search.ph" autocomplete="off" />
+        <button class="search-btn" id="searchBtn" aria-label="Search">⌕</button>
+        <div class="search-results" id="searchResults" hidden></div>
+      </div>
+
+      <div class="lang-switch" role="group" aria-label="Language">
+        <button data-lang="en" class="lang-btn active">EN</button>
+        <button data-lang="fr" class="lang-btn">FR</button>
+        <button data-lang="ar" class="lang-btn">ع</button>
+      </div>
+
+      <button class="icon-btn" id="themeToggle" aria-label="Toggle theme">☀</button>
+      <button class="icon-btn live" id="liveBtn" aria-label="Live status" title="API status"><i class="live-dot"></i></button>
+    </div>
+  </div>
+</header>
+
+<!-- ══════════════ BREAKING TICKER ══════════════ -->
+<div class="ticker" id="ticker" hidden>
+  <div class="ticker-label"><span class="ticker-pulse"></span><span data-i18n="ticker.breaking">LIVE</span></div>
+  <div class="ticker-viewport">
+    <div class="ticker-track" id="tickerTrack"></div>
+  </div>
+</div>
+
+<!-- ══════════════ HERO ══════════════ -->
+<section class="hero" id="top">
+  <canvas id="globeCanvas" aria-hidden="true"></canvas>
+  <div class="hero-glow" aria-hidden="true"></div>
+
+  <div class="hero-inner">
+    <div class="hero-copy reveal">
+      <p class="hero-kicker"><span class="flag">🇲🇦</span> <span data-i18n="hero.kicker">Morocco in real time</span></p>
+      <h1 class="hero-title">
+        <span class="hero-line" data-i18n="hero.line1">Every story.</span>
+        <span class="hero-line accent" data-i18n="hero.line2">Every angle.</span>
+        <span class="hero-line" data-i18n="hero.line3">One Morocco.</span>
+      </h1>
+      <p class="hero-sub" data-i18n="hero.sub">
+        Live politics, economy, world and culture from Morocco's newsrooms —
+        reimagined as a living 3D experience with on-device AI insights.
+      </p>
+      <div class="hero-cta">
+        <a class="btn btn-primary" href="#feed" data-scroll data-i18n="hero.cta1">Read the feed ↓</a>
+        <button class="btn btn-ghost" id="digestBtn" data-i18n="hero.cta2">✦ AI Briefing</button>
+      </div>
+      <div class="hero-stats" id="heroStats">
+        <div class="stat"><b id="statArticles">—</b><span data-i18n="hero.articles">live articles</span></div>
+        <div class="stat"><b>4</b><span data-i18n="hero.sources">news sources</span></div>
+        <div class="stat"><b>4</b><span data-i18n="hero.languages">languages</span></div>
+      </div>
+    </div>
+    <div class="hero-side" id="heroSide"><!-- top secondary stories injected --></div>
+  </div>
+
+  <a class="hero-scroll" href="#insights" data-scroll aria-label="Scroll">⌄</a>
+</section>
+
+<!-- ══════════════ AI INSIGHTS ══════════════ -->
+<section class="insights" id="insights">
+  <div class="section-head reveal">
+    <h2><span class="spark">✦</span> <span data-i18n="ai.title">AI Insights</span></h2>
+    <p class="section-sub" data-i18n="ai.sub">On-device analysis of the live feed — nothing leaves your browser.</p>
+  </div>
+
+  <div class="insights-grid">
+    <div class="insight-card reveal" id="trendingCard">
+      <h3 data-i18n="ai.trending">🔥 Trending topics</h3>
+      <div class="chip-row" id="trendingChips"><span class="mini-loader"></span></div>
+    </div>
+
+    <div class="insight-card reveal" id="moodCard">
+      <h3 data-i18n="ai.mood">🫀 Mood of the news</h3>
+      <div class="mood-wrap">
+        <div class="mood-gauge"><i id="moodBar"></i></div>
+        <div class="mood-labels"><span data-i18n="ai.negative">Negative</span><span id="moodScore">—</span><span data-i18n="ai.positive">Positive</span></div>
+      </div>
+    </div>
+
+    <div class="insight-card reveal digest-card">
+      <h3 data-i18n="ai.digest">⚡ Instant briefing</h3>
+      <div id="digestBody" class="digest-body"><p class="muted" data-i18n="ai.digestHint">Press “AI Briefing” to distill the current feed into key bullets.</p></div>
+    </div>
+  </div>
+</section>
+
+<!-- ══════════════ FEED ══════════════ -->
+<section class="feed" id="feed">
+  <div class="section-head reveal">
+    <h2 data-i18n="feed.title">The Feed</h2>
+    <p class="section-sub" id="feedMeta" data-i18n="feed.sub">Latest from all sources</p>
+  </div>
+
+  <div class="feed-controls reveal">
+    <div class="cat-tabs" id="catTabs" role="tablist">
+      <button class="cat-tab active" data-cat="all" data-i18n="cats.all">All</button>
+      <button class="cat-tab" data-cat="politique" data-i18n="cats.politics">Politics</button>
+      <button class="cat-tab" data-cat="economie" data-i18n="cats.economy">Economy</button>
+      <button class="cat-tab" data-cat="monde" data-i18n="cats.world">World</button>
+      <button class="cat-tab" data-cat="general" data-i18n="cats.general">Morocco</button>
+      <button class="cat-tab" data-cat="culture" data-i18n="cats.culture">Culture</button>
+      <button class="cat-tab" data-cat="social" data-i18n="cats.society">Society</button>
+    </div>
+    <div class="source-switch" id="sourceSwitch" role="group" aria-label="Source">
+      <button data-src="all" class="src-btn active">All sources</button>
+      <button data-src="mapnews" class="src-btn">Portal</button>
+      <button data-src="map-portal" class="src-btn">Official</button>
+      <button data-src="hibasport" class="src-btn">HibaSport</button>
+    </div>
+  </div>
+
+  <div class="news-grid" id="newsGrid" aria-live="polite"></div>
+
+  <div class="feed-more">
+    <button class="btn btn-ghost" id="loadMore" data-i18n="feed.more">Load more ↓</button>
+  </div>
+</section>
+
+<!-- ══════════════ SPORT BAND ══════════════ -->
+<section class="sport" id="sport">
+  <div class="section-head reveal">
+    <h2><span class="pitch">⚽</span> <span data-i18n="sport.title">Sports</span></h2>
+    <p class="section-sub" data-i18n="sport.sub">Botola, CAN, Atlas Lions — the sports desk, live</p>
+  </div>
+  <div class="sport-rail" id="sportRail"><div class="rail-skeleton"></div></div>
+</section>
+
+<!-- ══════════════ CULTURE STRIP ══════════════ -->
+<section class="culture" id="culture">
+  <div class="section-head reveal">
+    <h2>🎭 <span data-i18n="culture.title">Culture & Society</span></h2>
+    <p class="section-sub" data-i18n="culture.sub">Festivals, heritage, cinema — Morocco's creative pulse</p>
+  </div>
+  <div class="culture-grid" id="cultureGrid"><div class="rail-skeleton"></div></div>
+</section>
+
+<!-- ══════════════ FOOTER ══════════════ -->
+<footer class="site-footer">
+  <div class="footer-inner">
+    <div class="footer-brand">
+      <span class="brand-star">★</span> <b>MAROC<em>NEWS</em></b>
+      <p data-i18n="footer.tag">Live Moroccan news — one feed, every angle.</p>
+    </div>
+    <div class="footer-col">
+      <h4 data-i18n="footer.status">Source status</h4>
+      <ul id="healthList"><li class="muted">…</li></ul>
+    </div>
+    <div class="footer-col">
+      <h4 data-i18n="footer.explore">Explore</h4>
+      <ul>
+        <li><a href="/docs" data-i18n="footer.api">API documentation</a></li>
+        <li><a href="#feed" data-scroll data-i18n="footer.topFeed">Latest news</a></li>
+      </ul>
+    </div>
+    <div class="footer-col">
+      <h4 data-i18n="footer.rightsTitle">Content</h4>
+      <p class="muted small" data-i18n="footer.rights">Articles belong to their publishers — every story links back to its original source.</p>
+    </div>
+  </div>
+  <div class="footer-base">★ MAROCNEWS · <span data-i18n="footer.built">Live news, beautifully told</span> · <span id="clock"></span></div>
+</footer>
+
+<!-- ══════════════ READER MODAL ══════════════ -->
+<div class="reader-backdrop" id="readerBackdrop" hidden>
+  <article class="reader" role="dialog" aria-modal="true" aria-label="Article reader">
+    <div class="reader-progress" id="readerProgress" aria-hidden="true"><i></i></div>
+    <button class="reader-close" id="readerClose" aria-label="Close">✕</button>
+    <div class="reader-hero" id="readerHero"><div class="reader-skeleton"></div></div>
+    <div class="reader-body">
+      <div class="reader-meta" id="readerMeta"></div>
+      <h1 id="readerTitle"></h1>
+      <p class="reader-lead" id="readerLead"></p>
+      <div class="reader-actions">
+        <button class="btn btn-ghost small" id="readerSummarize">✦ <span data-i18n="reader.summarize">AI summary</span></button>
+        <button class="btn btn-ghost small" id="readerCopy">⧉ <span data-i18n="reader.copy">Copy link</span></button>
+        <span class="reading-time" id="readerTime"></span>
+      </div>
+      <div class="reader-content" id="readerContent"></div>
+      <div class="reader-source" id="readerSource" hidden></div>
+      <div class="reader-related" id="readerRelated" hidden>
+        <h4 data-i18n="reader.related">More like this</h4>
+        <div class="related-grid" id="relatedGrid"></div>
+      </div>
+    </div>
+  </article>
+</div>
+
+<div class="toast" id="toast" hidden></div>
+<div class="offline-banner" id="offlineBanner" hidden>⚠ <span data-i18n="offline.msg">The news engine is offline — buttons will respond again once it restarts.</span></div>
+
+<noscript><div style="position:fixed;inset:0;background:#07080d;color:#eef0f6;display:grid;place-items:center;font-family:sans-serif;z-index:300;text-align:center;padding:20px">Maroc News needs JavaScript enabled.</div></noscript>
+
+<script src="/vendor/three.min.js"></script>
+<script src="/js/globe.js?v=8"></script>
+<script src="/js/ai.js?v=8"></script>
+<script src="/js/app.js?v=8"></script>
+</body>
+</html>

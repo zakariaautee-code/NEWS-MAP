@@ -1,0 +1,199 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>MAP News API — Documentation</title>
+<style>
+  :root {
+    --bg: #0d1117; --panel: #161b22; --border: #30363d; --text: #e6edf3;
+    --muted: #8b949e; --accent: #e8442f; --green: #3fb950; --blue: #58a6ff;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { background: var(--bg); color: var(--text); font: 15px/1.6 -apple-system, "Segoe UI", Roboto, sans-serif; }
+  .wrap { max-width: 1080px; margin: 0 auto; padding: 40px 24px 80px; }
+  header { display: flex; align-items: center; gap: 16px; margin-bottom: 8px; }
+  .logo { width: 52px; height: 52px; border-radius: 12px; background: var(--accent); display: grid; place-items: center; font-weight: 800; font-size: 20px; color: #fff; }
+  h1 { font-size: 28px; }
+  .sub { color: var(--muted); margin-bottom: 28px; }
+  .pill { display: inline-block; background: var(--panel); border: 1px solid var(--border); border-radius: 999px; padding: 2px 12px; font-size: 12px; color: var(--muted); margin-right: 6px; }
+  h2 { font-size: 19px; margin: 36px 0 12px; border-bottom: 1px solid var(--border); padding-bottom: 8px; }
+  .card { background: var(--panel); border: 1px solid var(--border); border-radius: 10px; padding: 16px 18px; margin-bottom: 14px; }
+  .ep { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; }
+  .method { font-weight: 700; font-size: 12px; padding: 2px 8px; border-radius: 5px; background: #1f6feb33; color: var(--blue); }
+  code.path { color: var(--blue); font-family: ui-monospace, Consolas, monospace; font-size: 14px; }
+  .desc { color: var(--muted); font-size: 13.5px; margin: 8px 0 10px; }
+  .q { color: var(--muted); font-size: 12.5px; font-family: ui-monospace, Consolas, monospace; }
+  .q b { color: #d2a8ff; font-weight: 600; }
+  button.try { margin-left: auto; background: var(--accent); border: 0; color: #fff; font-weight: 600; font-size: 12.5px; padding: 6px 14px; border-radius: 6px; cursor: pointer; }
+  button.try:hover { filter: brightness(1.1); }
+  pre { background: #0a0d12; border: 1px solid var(--border); border-radius: 8px; padding: 12px 14px; overflow-x: auto; font: 12.5px ui-monospace, Consolas, monospace; margin-top: 10px; max-height: 420px; color: #c9d1d9; }
+  table { width: 100%; border-collapse: collapse; font-size: 13.5px; margin-top: 6px; }
+  th, td { text-align: left; padding: 7px 10px; border-bottom: 1px solid var(--border); vertical-align: top; }
+  th { color: var(--muted); font-weight: 600; }
+  td code { color: #d2a8ff; font-family: ui-monospace, Consolas, monospace; font-size: 12.5px; }
+  .footer { margin-top: 48px; color: var(--muted); font-size: 13px; }
+  .footer a { color: var(--blue); }
+  .ok { color: var(--green); font-weight: 600; }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header>
+    <div class="logo">MAP</div>
+    <div>
+      <h1>MAP News API</h1>
+      <div class="sub">Unified REST API for news from Maghreb Arabe Presse — mapnews.ma · www.map.ma · mapsport.ma</div>
+      <span class="pill" id="ver">v1</span>
+      <span class="pill">EN · FR · AR · ES</span>
+      <span class="pill">cached &amp; rate-limited</span>
+      <span class="pill" id="health">health: checking…</span>
+    </div>
+  </header>
+
+  <h2>Quickstart</h2>
+  <div class="card">
+    <pre>GET /api/v1/news?source=all&amp;lang=en&amp;limit=10
+GET /api/v1/news?source=mapnews&amp;lang=fr&amp;section=politique
+GET /api/v1/news/article?url=&lt;encoded article URL&gt;
+GET /api/v1/search?q=finance&amp;lang=en
+GET /api/v1/categories?source=map-sport
+GET /api/v1/sections?lang=en
+GET /api/v1/news/archive?lang=en&amp;page=1   (19 000+ article URLs)
+GET /api/v1/health</pre>
+  </div>
+
+  <h2>Endpoints</h2>
+
+  <div class="card">
+    <div class="ep"><span class="method">GET</span><code class="path">/api/v1/news</code><button class="try" data-u="/api/v1/news?source=all&lang=en&limit=5">Try it</button></div>
+    <p class="desc">Unified, deduplicated feed across all sources (or one), newest first.</p>
+    <table>
+      <tr><th>Param</th><th>Values</th><th>Notes</th></tr>
+      <tr><td><code>source</code></td><td><code>all</code> (default) · <code>mapnews</code> · <code>map-portal</code> · <code>map-sport</code> · <code>hibasport</code></td><td><code>mapnews</code> = daily portal; <code>map-portal</code> = institutional site; <code>map-sport</code> = sports (FR); <code>hibasport</code> = Arabic sports (Hiba family, open WP API)</td></tr>
+      <tr><td><code>lang</code></td><td><code>en</code> · <code>fr</code> · <code>ar</code> · <code>es</code></td><td>map-sport only publishes FR; others fall back gracefully</td></tr>
+      <tr><td><code>section</code></td><td>mapnews sections</td><td>e.g. <code>politique</code>, <code>economie</code>, <code>monde</code>, <code>general</code>, <code>sport</code>, <code>culture</code> — see <code>/sections</code></td></tr>
+      <tr><td><code>category</code></td><td>WP category slug</td><td>only for <code>map-portal</code>/<code>map-sport</code> — see <code>/categories</code></td></tr>
+      <tr><td><code>page</code>, <code>limit</code></td><td>integers</td><td><code>limit</code> ≤ 50</td></tr>
+    </table>
+  </div>
+
+  <div class="card">
+    <div class="ep"><span class="method">GET</span><code class="path">/api/v1/news/article</code><button class="try" data-u="/api/v1/news/article?url=https%3A%2F%2Fmapnews.ma%2Fen%2Factualites%2Fpolitics%2Fmorocco%E2%80%99s-parliament-hold-joint-plenary-session-present-2027-finance-bill">Try it</button></div>
+    <p class="desc">Full article by URL (works for any article on the three sources). Returns title, lead, full HTML + plain-text body, image, city, categories, dates.</p>
+    <p class="q"><b>url</b>=&lt;URL-encoded article URL&gt; (required)</p>
+  </div>
+
+  <div class="card">
+    <div class="ep"><span class="method">GET</span><code class="path">/api/v1/search</code><button class="try" data-u="/api/v1/search?q=morocco&lang=en">Try it</button></div>
+    <p class="desc">Cross-source search. WordPress sources use their native search; mapnews scans its live section feeds.</p>
+    <p class="q"><b>q</b>=text &nbsp; <b>lang</b>=en|fr|ar &nbsp; <b>source</b>=all|mapnews|map-portal|map-sport|hibasport &nbsp; <b>limit</b>=n</p>
+  </div>
+
+  <div class="card">
+    <div class="ep"><span class="method">GET</span><code class="path">/api/v1/categories</code><button class="try" data-u="/api/v1/categories?source=map-sport">Try it</button></div>
+    <p class="desc">Category taxonomy per source (WordPress categories; mapnews sections).</p>
+    <p class="q"><b>source</b>=all|mapnews|map-portal|map-sport|hibasport &nbsp; <b>lang</b>=…</p>
+  </div>
+
+  <div class="card">
+    <div class="ep"><span class="method">GET</span><code class="path">/api/v1/sections</code><button class="try" data-u="/api/v1/sections?lang=en">Try it</button></div>
+    <p class="desc">mapnews sections auto-discovered from the portal navigation, with their RSS URLs.</p>
+    <p class="q"><b>lang</b>=en|fr|ar</p>
+  </div>
+
+  <div class="card">
+    <div class="ep"><span class="method">GET</span><code class="path">/api/v1/news/archive</code><button class="try" data-u="/api/v1/news/archive?lang=en&page=1">Try it</button></div>
+    <p class="desc">Deep archive (URL + last-modified) from the mapnews sitemap — tens of thousands of articles.</p>
+    <p class="q"><b>lang</b>=en|fr|ar &nbsp; <b>page</b>=n</p>
+  </div>
+
+  <div class="card">
+    <div class="ep"><span class="method">GET</span><code class="path">/api/v1/health</code><button class="try" data-u="/api/v1/health">Try it</button></div>
+    <p class="desc">Upstream status per source + cache stats.</p>
+  </div>
+
+  <div class="card">
+    <div class="ep"><span class="method">POST</span><code class="path">/api/v1/ai/summarize</code></div>
+    <p class="desc">Generative AI summary of any article. Body: <code>{ "url": "&lt;article url&gt;", "lang": "en|fr|ar|es" }</code>. Returns <code>{ engine, tldr, bullets }</code> — <code>engine</code> is <code>generative</code> when <code>AI_API_KEY</code> is configured (any OpenAI-compatible provider via <code>AI_BASE_URL</code>/<code>AI_MODEL</code>), otherwise <code>extractive</code> (on-device TextRank-lite, always available).</p>
+  </div>
+
+  <div class="card">
+    <div class="ep"><span class="method">POST</span><code class="path">/api/v1/admin/cache/clear</code></div>
+    <p class="desc">Empty the response cache. <code>GET /api/v1/admin/cache</code> shows its size.</p>
+  </div>
+
+  <h2>Response shape</h2>
+  <div class="card">
+    <pre>{
+  "items": [{
+    "id": "mapnews:e0a5ad5ac5f3",
+    "source": "mapnews",           // mapnews | map-portal | map-sport
+    "lang": "en",
+    "title": "…", "url": "…", "slug": "…",
+    "section": "politique",        // mapnews
+    "categories": ["Politics"], "tags": [],
+    "lead": "…",                   // chapeau / standfirst
+    "summary": "…",                // short plain text
+    "contentHtml": "…", "contentText": "…",  // full body (feed/article endpoints)
+    "city": "Rabat",
+    "image": "https://…",
+    "publishedAt": "2026-10-23T17:35:59.000Z",
+    "fetchedAt": "…"
+  }],
+  "meta": { "page": 1, "limit": 5, "total": 70, "sources": { … }, "generatedAt": "…" }
+}</pre>
+  </div>
+
+  <h2>Use it from your website</h2>
+  <div class="card">
+    <pre>// JavaScript (browser or Node)
+const res = await fetch("http://localhost:3000/api/v1/news?source=all&lang=en&limit=12");
+const { items } = await res.json();
+
+// list item  →  render card        full body →  fetch detail
+items.map(it => `&lt;a href="/news/${it.id}"&gt;${it.title}&lt;/a&gt;`);
+const full = await (await fetch(
+  `/api/v1/news/article?url=${encodeURIComponent(items[0].url)}`
+)).json();</pre>
+  </div>
+
+  <h2>Notes</h2>
+  <div class="card">
+    <table>
+      <tr><th>Topic</th><th>Detail</th></tr>
+      <tr><td>Caching</td><td>Lists 5 min · articles 30 min · taxonomy 1 h · sections 6 h. Upstream failures serve stale data (<code>cacheState</code> in logs).</td></tr>
+      <tr><td>Politeness</td><td>mapnews.ma robots.txt Crawl-delay (10 s) is enforced between upstream requests; map-sport/map-portal max 1 req / 1.5 s.</td></tr>
+      <tr><td>Auth</td><td>Open by default. Set <code>API_KEY</code> to require an <code>x-api-key</code> header. Set <code>CORS_ORIGIN</code> to lock browser access to your domain.</td></tr>
+      <tr><td>Rate limit</td><td>300 req/min per IP (configurable via <code>RATE_LIMIT_PER_MINUTE</code>).</td></tr>
+      <tr><td>Attribution</td><td>Content belongs to MAP (Maghreb Arabe Presse). Display source + link back to the original article.</td></tr>
+      <tr><td>Sources</td><td><code>mapnews</code>, <code>map-portal</code>, <code>map-sport</code>, and <code>hibasport</code> (Arabic sports portal — Hiba family, open WordPress REST, ~108k posts, AR only). The HibaPress general portal (hibapress.com) is behind Cloudflare bot protection and is intentionally not accessed.</td></tr>
+    </table>
+  </div>
+
+  <p class="footer">MAP News API v1 — not affiliated with MAP. Data fetched from public RSS/REST endpoints of mapnews.ma, www.map.ma and mapsport.ma.</p>
+</div>
+
+<script>
+  const base = location.origin;
+  document.querySelectorAll("button.try").forEach(btn => {
+    btn.addEventListener("click", async () => {
+      const card = btn.closest(".card");
+      let out = card.querySelector("pre.result");
+      if (!out) { out = document.createElement("pre"); out.className = "result"; card.appendChild(out); }
+      out.textContent = "loading…";
+      try {
+        const r = await fetch(base + btn.dataset.u);
+        const j = await r.json();
+        out.textContent = JSON.stringify(j, null, 2).slice(0, 4000);
+      } catch (e) { out.textContent = "Error: " + e.message; }
+    });
+  });
+  fetch(base + "/api/v1/health").then(r => r.json()).then(h => {
+    const el = document.getElementById("health");
+    el.textContent = "health: " + h.status + " (" + h.checks.filter(c => c.ok).length + "/" + h.checks.length + " sources)";
+    el.classList.add("ok");
+  }).catch(() => { document.getElementById("health").textContent = "health: unreachable"; });
+</script>
+</body>
+</html>
